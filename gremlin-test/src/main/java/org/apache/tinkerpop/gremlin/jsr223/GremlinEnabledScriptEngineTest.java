@@ -30,7 +30,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.apache.tinkerpop.gremlin.jsr223.GremlinScriptEngineSuite.ENGINE_TO_TEST;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.hamcrest.core.Is.is;
 
 /**
  * This is an important test case in that it validates that core features of {@code ScriptEngine} instances that claim
@@ -52,7 +54,7 @@ public class GremlinEnabledScriptEngineTest {
         final GremlinScriptEngine scriptEngine = manager.getEngineByName(ENGINE_TO_TEST);
         final List<Class> classesToCheck = Arrays.asList(Vertex.class, Edge.class, Graph.class, VertexProperty.class);
         for (Class clazz : classesToCheck) {
-            assertEquals(clazz, scriptEngine.eval(clazz.getSimpleName()));
+            assertClassEquality(scriptEngine.eval(clazz.getSimpleName()), clazz);
         }
     }
 
@@ -77,7 +79,7 @@ public class GremlinEnabledScriptEngineTest {
         final GremlinScriptEngine scriptEngine = mgr.getEngineByName(ENGINE_TO_TEST);
         final List<Class> classesToCheck = Arrays.asList(java.awt.Color.class, java.sql.CallableStatement.class);
         for (Class clazz : classesToCheck) {
-            assertEquals(clazz, scriptEngine.eval(clazz.getSimpleName()));
+            assertClassEquality(scriptEngine.eval(clazz.getSimpleName()), clazz);
         }
     }
 
@@ -88,5 +90,14 @@ public class GremlinEnabledScriptEngineTest {
                 .classImports(java.awt.Color.class)
                 .appliesTo(Collections.singletonList("fake-script-engine")).create());
         assertEquals(0, mgr.getCustomizers(ENGINE_TO_TEST).size());
+    }
+
+    private void assertClassEquality(final Object fromScriptEngine, final Class<?> expected) {
+        // this should typically equal the Class, but some scriptengines like nashorn create a synthetic class
+        // to wrap it in.
+        final boolean matches = fromScriptEngine.equals(expected) || fromScriptEngine.toString().contains(expected.getName());
+
+        assertThat("Doesn't match for " + fromScriptEngine, matches, is(true));
+
     }
 }

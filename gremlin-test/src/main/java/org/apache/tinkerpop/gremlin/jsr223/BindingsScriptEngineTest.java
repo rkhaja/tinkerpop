@@ -62,7 +62,7 @@ public class BindingsScriptEngineTest {
 
         final GremlinScriptEngine engine1 = manager.getEngineByName(ENGINE_TO_TEST);
         assertThat(engine1.getBindings(ScriptContext.GLOBAL_SCOPE).size(), is(1));
-        assertEquals(101, (int) engine1.eval("x+1"));
+        assertEquals(101, ((Number) engine1.eval("x+1")).intValue());
 
         manager.getBindings().remove("x");
         final GremlinScriptEngine engine2 = manager.getEngineByName(ENGINE_TO_TEST);
@@ -79,7 +79,7 @@ public class BindingsScriptEngineTest {
         manager.addPlugin(plugin);
         final GremlinScriptEngine engine = manager.getEngineByName(ENGINE_TO_TEST);
         assertThat(engine.getBindings(ScriptContext.GLOBAL_SCOPE).size(), is(1));
-        assertEquals(101, (int) engine.eval("x+1"));
+        assertEquals(101, ((Number) engine.eval("x+1")).intValue());
     }
 
     @Test

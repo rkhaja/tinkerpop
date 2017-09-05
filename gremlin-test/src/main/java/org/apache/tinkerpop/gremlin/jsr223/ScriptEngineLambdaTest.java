@@ -37,7 +37,7 @@ public class ScriptEngineLambdaTest {
     public void shouldCallAsFunction() {
         // Function.apply
         final ScriptEngineLambda lambda = newLambda("1+a");
-        assertEquals(11, Integer.parseInt(lambda.apply(10).toString()));
+        assertEquals(11, ((Number) lambda.apply(10)).intValue());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -130,14 +130,14 @@ public class ScriptEngineLambdaTest {
     @Test
     public void shouldCallTrivialFunction() {
         final ScriptEngineLambda lambda = newLambda("2 + 2");
-        assertEquals(lambda.apply("foo"), 4);
+        assertEquals(4, lambda.apply("foo"));
     }
 
     @Test
     public void shouldCallAsOneArgFunction() {
         final ScriptEngineLambda lambda = newLambda("a + 2");
-        assertEquals(lambda.apply(3), 5);
-        assertEquals(lambda.apply(10), 12);
+        assertEquals(5, ((Number) lambda.apply(3)).intValue());
+        assertEquals(12, ((Number) lambda.apply(10)).intValue());
     }
 
     private static ScriptEngineLambda newLambda(final String script) {
